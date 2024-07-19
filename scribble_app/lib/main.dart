@@ -42,7 +42,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final LlamaService _llamaService = LlamaService(
-    apiUrl: 'http://localhost:1234/v1/chat/completions',
+    apiUrl: 'http://localhost:1234/v1',
   );
 
   List<String> _completions = [];
