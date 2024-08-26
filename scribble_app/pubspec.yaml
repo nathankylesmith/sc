@@ -30,26 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  path_provider: ^2.0.15
-  flutter_blue_plus: ^1.5.2
-  flutter_tts: ^4.0.2
-  http: ^1.2.1
-  sqlite3_flutter_libs: ^0.5.0
-  path: ^1.8.2
-  vector_math: ^2.1.0
-  sqflite: ^2.0.0+4
-  objectbox: ^2.5.0
-  objectbox_flutter_libs: ^2.0.0
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # Removed http dependency
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.3.0
-  objectbox_generator: ^2.0.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

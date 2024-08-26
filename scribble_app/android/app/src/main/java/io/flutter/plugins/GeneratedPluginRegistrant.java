@@ -15,35 +15,5 @@ import io.flutter.embedding.engine.FlutterEngine;
 public final class GeneratedPluginRegistrant {
   private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
-    try {
-      flutterEngine.getPlugins().add(new com.lib.flutter_blue_plus.FlutterBluePlusPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_blue_plus, com.lib.flutter_blue_plus.FlutterBluePlusPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new com.tundralabs.fluttertts.FlutterTtsPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_tts, com.tundralabs.fluttertts.FlutterTtsPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new io.objectbox.objectbox_flutter_libs.ObjectboxFlutterLibsPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin objectbox_flutter_libs, io.objectbox.objectbox_flutter_libs.ObjectboxFlutterLibsPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new io.flutter.plugins.pathprovider.PathProviderPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin path_provider_android, io.flutter.plugins.pathprovider.PathProviderPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new com.tekartik.sqflite.SqflitePlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin sqflite, com.tekartik.sqflite.SqflitePlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new eu.simonbinder.sqlite3_flutter_libs.Sqlite3FlutterLibsPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin sqlite3_flutter_libs, eu.simonbinder.sqlite3_flutter_libs.Sqlite3FlutterLibsPlugin", e);
-    }
   }
 }
