@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
-import '../services/llama_service.dart';
 
 class AddContextPage extends StatefulWidget {
   final DatabaseService databaseService;
-  final LlamaService llamaService;
 
   const AddContextPage({
     Key? key,
     required this.databaseService,
-    required this.llamaService,
   }) : super(key: key);
 
   @override
@@ -23,8 +20,8 @@ class _AddContextPageState extends State<AddContextPage> {
   Future<void> _addContext() async {
     if (_formKey.currentState!.validate()) {
       final content = _contentController.text;
-      final embedding = await widget.llamaService.getEmbedding(content);
-      await widget.databaseService.addContextItem(content, embedding);
+      // TODO: Implement adding context to the database
+      // await widget.databaseService.addContextItem(content);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Context added successfully')),
       );
