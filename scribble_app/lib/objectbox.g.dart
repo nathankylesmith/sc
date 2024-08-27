@@ -21,26 +21,67 @@ export 'package:objectbox/objectbox.dart'; // so that callers only have to impor
 
 final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(1, 1227704315193853570),
-      name: 'ContextItem',
-      lastPropertyId: const obx_int.IdUid(3, 4799952240466897185),
+      id: const obx_int.IdUid(4, 5663275069712737874),
+      name: 'AudioContextItem',
+      lastPropertyId: const obx_int.IdUid(4, 1878078308348321827),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 5452040319708542009),
+            id: const obx_int.IdUid(1, 2598328190654821553),
             name: 'id',
             type: 6,
             flags: 1),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 5057609684850204464),
+            id: const obx_int.IdUid(2, 5312034367181756970),
+            name: 'filename',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 668547182320495381),
+            name: 'filePath',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 1878078308348321827),
+            name: 'createdAt',
+            type: 10,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(5, 2272467020430899855),
+      name: 'ContextItem',
+      lastPropertyId: const obx_int.IdUid(5, 1183687175964651143),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 998551582602447541),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 2732291289838330518),
+            name: 'filename',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 6808490592231889815),
             name: 'content',
             type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 4799952240466897185),
-            name: 'embedding',
-            type: 29,
-            flags: 0)
+            id: const obx_int.IdUid(4, 7810266948242189817),
+            name: 'createdAt',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 1183687175964651143),
+            name: 'audioContextItemId',
+            type: 11,
+            flags: 520,
+            indexId: const obx_int.IdUid(2, 6286035844982742130),
+            relationTarget: 'AudioContextItem')
       ],
       relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
@@ -81,34 +122,52 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(1, 1227704315193853570),
-      lastIndexId: const obx_int.IdUid(0, 0),
+      lastEntityId: const obx_int.IdUid(5, 2272467020430899855),
+      lastIndexId: const obx_int.IdUid(2, 6286035844982742130),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
-      retiredEntityUids: const [],
+      retiredEntityUids: const [
+        1227704315193853570,
+        2508510815065060011,
+        1564031132270936546
+      ],
       retiredIndexUids: const [],
-      retiredPropertyUids: const [],
+      retiredPropertyUids: const [
+        5452040319708542009,
+        5057609684850204464,
+        4799952240466897185,
+        4060389133168270413,
+        6281754370306440688,
+        2618022208323064739,
+        624923504248606464,
+        7176146195943018626,
+        2795124721063737989,
+        8409498573812053644,
+        5921019117155357297,
+        2838383385783961265
+      ],
       retiredRelationUids: const [],
       modelVersion: 5,
       modelVersionParserMinimum: 5,
       version: 1);
 
   final bindings = <Type, obx_int.EntityDefinition>{
-    ContextItem: obx_int.EntityDefinition<ContextItem>(
+    AudioContextItem: obx_int.EntityDefinition<AudioContextItem>(
         model: _entities[0],
-        toOneRelations: (ContextItem object) => [],
-        toManyRelations: (ContextItem object) => {},
-        getId: (ContextItem object) => object.id,
-        setId: (ContextItem object, int id) {
+        toOneRelations: (AudioContextItem object) => [],
+        toManyRelations: (AudioContextItem object) => {},
+        getId: (AudioContextItem object) => object.id,
+        setId: (AudioContextItem object, int id) {
           object.id = id;
         },
-        objectToFB: (ContextItem object, fb.Builder fbb) {
-          final contentOffset = fbb.writeString(object.content);
-          final embeddingOffset = fbb.writeListFloat64(object.embedding);
-          fbb.startTable(4);
+        objectToFB: (AudioContextItem object, fb.Builder fbb) {
+          final filenameOffset = fbb.writeString(object.filename);
+          final filePathOffset = fbb.writeString(object.filePath);
+          fbb.startTable(5);
           fbb.addInt64(0, object.id);
-          fbb.addOffset(1, contentOffset);
-          fbb.addOffset(2, embeddingOffset);
+          fbb.addOffset(1, filenameOffset);
+          fbb.addOffset(2, filePathOffset);
+          fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -117,14 +176,59 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final idParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          final contentParam = const fb.StringReader(asciiOptimization: true)
+          final filenameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 6, '');
-          final embeddingParam =
-              const fb.ListReader<double>(fb.Float64Reader(), lazy: false)
-                  .vTableGet(buffer, rootOffset, 8, []);
-          final object = ContextItem(
-              id: idParam, content: contentParam, embedding: embeddingParam);
+          final filePathParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final object = AudioContextItem(
+              id: idParam,
+              filename: filenameParam,
+              filePath: filePathParam,
+              createdAt: createdAtParam);
 
+          return object;
+        }),
+    ContextItem: obx_int.EntityDefinition<ContextItem>(
+        model: _entities[1],
+        toOneRelations: (ContextItem object) => [object.audioContextItem],
+        toManyRelations: (ContextItem object) => {},
+        getId: (ContextItem object) => object.id,
+        setId: (ContextItem object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ContextItem object, fb.Builder fbb) {
+          final filenameOffset = fbb.writeString(object.filename);
+          final contentOffset = fbb.writeString(object.content);
+          fbb.startTable(6);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, filenameOffset);
+          fbb.addOffset(2, contentOffset);
+          fbb.addInt64(3, object.createdAt.millisecondsSinceEpoch);
+          fbb.addInt64(4, object.audioContextItem.targetId);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final filenameParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final contentParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final createdAtParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0));
+          final object = ContextItem(
+              id: idParam,
+              filename: filenameParam,
+              content: contentParam,
+              createdAt: createdAtParam);
+          object.audioContextItem.targetId =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
+          object.audioContextItem.attach(store);
           return object;
         })
   };
@@ -132,17 +236,45 @@ obx_int.ModelDefinition getObjectBoxModel() {
   return obx_int.ModelDefinition(model, bindings);
 }
 
+/// [AudioContextItem] entity fields to define ObjectBox queries.
+class AudioContextItem_ {
+  /// see [AudioContextItem.id]
+  static final id =
+      obx.QueryIntegerProperty<AudioContextItem>(_entities[0].properties[0]);
+
+  /// see [AudioContextItem.filename]
+  static final filename =
+      obx.QueryStringProperty<AudioContextItem>(_entities[0].properties[1]);
+
+  /// see [AudioContextItem.filePath]
+  static final filePath =
+      obx.QueryStringProperty<AudioContextItem>(_entities[0].properties[2]);
+
+  /// see [AudioContextItem.createdAt]
+  static final createdAt =
+      obx.QueryDateProperty<AudioContextItem>(_entities[0].properties[3]);
+}
+
 /// [ContextItem] entity fields to define ObjectBox queries.
 class ContextItem_ {
   /// see [ContextItem.id]
   static final id =
-      obx.QueryIntegerProperty<ContextItem>(_entities[0].properties[0]);
+      obx.QueryIntegerProperty<ContextItem>(_entities[1].properties[0]);
+
+  /// see [ContextItem.filename]
+  static final filename =
+      obx.QueryStringProperty<ContextItem>(_entities[1].properties[1]);
 
   /// see [ContextItem.content]
   static final content =
-      obx.QueryStringProperty<ContextItem>(_entities[0].properties[1]);
+      obx.QueryStringProperty<ContextItem>(_entities[1].properties[2]);
 
-  /// see [ContextItem.embedding]
-  static final embedding =
-      obx.QueryDoubleVectorProperty<ContextItem>(_entities[0].properties[2]);
+  /// see [ContextItem.createdAt]
+  static final createdAt =
+      obx.QueryDateProperty<ContextItem>(_entities[1].properties[3]);
+
+  /// see [ContextItem.audioContextItem]
+  static final audioContextItem =
+      obx.QueryRelationToOne<ContextItem, AudioContextItem>(
+          _entities[1].properties[4]);
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
+import '../models/context_item.dart';
+import './view_context_page.dart'; // Add this import
 
 class AddContextPage extends StatefulWidget {
   final DatabaseService databaseService;
@@ -20,10 +22,14 @@ class _AddContextPageState extends State<AddContextPage> {
   Future<void> _addContext() async {
     if (_formKey.currentState!.validate()) {
       final content = _contentController.text;
-      // TODO: Implement adding context to the database
-      // await widget.databaseService.addContextItem(content);
+      final contextItem = ContextItem(
+        filename: 'context_${DateTime.now().millisecondsSinceEpoch}.txt',
+        content: content,
+        createdAt: DateTime.now(),
+      );
+      await widget.databaseService.addContextItem(contextItem);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Context added successfully')),
+        const SnackBar(content: Text('Context added successfully')),
       );
       _contentController.clear();
     }
@@ -33,7 +39,7 @@ class _AddContextPageState extends State<AddContextPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Context'),
+        title: const Text('Add Context'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -43,7 +49,7 @@ class _AddContextPageState extends State<AddContextPage> {
             children: [
               TextFormField(
                 controller: _contentController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Context Content',
                   border: OutlineInputBorder(),
                 ),
@@ -55,14 +61,26 @@ class _AddContextPageState extends State<AddContextPage> {
                 },
                 maxLines: 5,
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _addContext,
-                child: Text('Add Context'),
+                child: const Text('Add Context'),
               ),
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ViewContextPage(databaseService: widget.databaseService),
+            ),
+          );
+        },
+        icon: const Icon(Icons.visibility),
+        label: const Text('Show Content'),
       ),
     );
   }

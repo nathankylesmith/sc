@@ -4,39 +4,98 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:1227704315193853570",
-      "lastPropertyId": "3:4799952240466897185",
-      "name": "ContextItem",
+      "id": "4:5663275069712737874",
+      "lastPropertyId": "4:1878078308348321827",
+      "name": "AudioContextItem",
       "properties": [
         {
-          "id": "1:5452040319708542009",
+          "id": "1:2598328190654821553",
           "name": "id",
           "type": 6,
           "flags": 1
         },
         {
-          "id": "2:5057609684850204464",
+          "id": "2:5312034367181756970",
+          "name": "filename",
+          "type": 9
+        },
+        {
+          "id": "3:668547182320495381",
+          "name": "filePath",
+          "type": 9
+        },
+        {
+          "id": "4:1878078308348321827",
+          "name": "createdAt",
+          "type": 10
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:2272467020430899855",
+      "lastPropertyId": "5:1183687175964651143",
+      "name": "ContextItem",
+      "properties": [
+        {
+          "id": "1:998551582602447541",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2732291289838330518",
+          "name": "filename",
+          "type": 9
+        },
+        {
+          "id": "3:6808490592231889815",
           "name": "content",
           "type": 9
         },
         {
-          "id": "3:4799952240466897185",
-          "name": "embedding",
-          "type": 29
+          "id": "4:7810266948242189817",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "5:1183687175964651143",
+          "name": "audioContextItemId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "2:6286035844982742130",
+          "relationTarget": "AudioContextItem"
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "1:1227704315193853570",
-  "lastIndexId": "0:0",
+  "lastEntityId": "5:2272467020430899855",
+  "lastIndexId": "2:6286035844982742130",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    1227704315193853570,
+    2508510815065060011,
+    1564031132270936546
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    5452040319708542009,
+    5057609684850204464,
+    4799952240466897185,
+    4060389133168270413,
+    6281754370306440688,
+    2618022208323064739,
+    624923504248606464,
+    7176146195943018626,
+    2795124721063737989,
+    8409498573812053644,
+    5921019117155357297,
+    2838383385783961265
+  ],
   "retiredRelationUids": [],
   "version": 1
 }
