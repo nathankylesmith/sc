@@ -68,9 +68,38 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "6:4067806130680950412",
+      "lastPropertyId": "4:3282377542032703978",
+      "name": "AudioRecording",
+      "properties": [
+        {
+          "id": "1:2364936867840592968",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7501538362287621858",
+          "name": "timestamp",
+          "type": 10
+        },
+        {
+          "id": "3:2069735353287538095",
+          "name": "filePath",
+          "type": 9
+        },
+        {
+          "id": "4:3282377542032703978",
+          "name": "duration",
+          "type": 6
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "5:2272467020430899855",
+  "lastEntityId": "6:4067806130680950412",
   "lastIndexId": "2:6286035844982742130",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",

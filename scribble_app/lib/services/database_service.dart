@@ -1,63 +1,41 @@
+import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import '../models/context_item.dart';
 import '../objectbox.g.dart';
+import '../models/audio_recording.dart';
+import 'package:objectbox/objectbox.dart';
 
 class DatabaseService {
   late final Store _store;
-  late final Box<ContextItem> _contextItemBox;
-  late final Box<AudioContextItem> _audioContextItemBox;
+  late final Box<AudioRecording> _audioRecordingBox;
+  
 
   DatabaseService._create(this._store) {
-    _contextItemBox = Box<ContextItem>(_store);
-    _audioContextItemBox = Box<AudioContextItem>(_store);
+    _audioRecordingBox = Box<AudioRecording>(_store);
   }
 
   static Future<DatabaseService> create() async {
-    final docsDir = await getApplicationDocumentsDirectory();
-    final store = await openStore(directory: p.join(docsDir.path, "objectbox"));
+    final store = await openStore();
     return DatabaseService._create(store);
   }
 
-  Future<int> addAudioContextItem(AudioContextItem audioContextItem) async {
-    return _audioContextItemBox.put(audioContextItem);
-  }
+  Box<AudioRecording> get audioRecordingBox => _audioRecordingBox;
+  Box<ContextItem> get contextItemBox => _store.box<ContextItem>();
 
-  Future<int> addContextItem(ContextItem contextItem) async {
-    return _contextItemBox.put(contextItem);
-  }
+  Future<void> deleteAudioRecording(AudioRecording recording) async {
+    // Delete the file from the file system
+    final file = File(recording.filePath);
+    if (await file.exists()) {
+      await file.delete();
+    }
 
-  List<AudioContextItem> getAllAudioContextItems() {
-    return _audioContextItemBox.getAll();
+    // Remove the recording from the database
+    audioRecordingBox.remove(recording.id);
   }
+}
 
-  List<ContextItem> getAllContextItems() {
-    return _contextItemBox.getAll();
-  }
-
-  AudioContextItem? getAudioContextItem(int id) {
-    return _audioContextItemBox.get(id);
-  }
-
-  ContextItem? getContextItem(int id) {
-    return _contextItemBox.get(id);
-  }
-
-  Future<void> deleteAudioContextItem(int id) async {
-    _audioContextItemBox.remove(id);
-  }
-
-  Future<void> deleteContextItem(int id) async {
-    _contextItemBox.remove(id);
-  }
-
-  void close() {
-    _store.close();
-  }
-
-  Future<List<ContextItem>> getContextItems() async {
-    // This method is already implemented as getAllContextItems()
-    // We can simply call that method and return its result
-    return getAllContextItems();
-  }
+Future<void> initialize() async {
+  final store = await openStore();
+  DatabaseService._create(store);
 }

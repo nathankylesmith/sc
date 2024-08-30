@@ -21,14 +21,9 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin audio_session, com.ryanheise.audio_session.AudioSessionPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new me.carda.awesome_notifications.AwesomeNotificationsPlugin());
+      flutterEngine.getPlugins().add(new xyz.luan.audioplayers.AudioplayersPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin awesome_notifications, me.carda.awesome_notifications.AwesomeNotificationsPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new me.carda.awesome_notifications_core.awesome_notifications_core.AwesomeNotificationsCorePlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin awesome_notifications_core, me.carda.awesome_notifications_core.awesome_notifications_core.AwesomeNotificationsCorePlugin", e);
+      Log.e(TAG, "Error registering plugin audioplayers_android, xyz.luan.audioplayers.AudioplayersPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.connectivity.ConnectivityPlugin());
@@ -49,21 +44,6 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.mr.flutter.plugin.filepicker.FilePickerPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin file_picker, com.mr.flutter.plugin.filepicker.FilePickerPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin firebase_auth, io.flutter.plugins.firebase.auth.FlutterFirebaseAuthPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin firebase_core, io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin firebase_messaging, io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new id.flutter.flutter_background_service.FlutterBackgroundServicePlugin());
@@ -106,11 +86,6 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_timezone, net.wolverinebeach.flutter_timezone.FlutterTimezonePlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.baseflow.geolocator.GeolocatorPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin geolocator_android, com.baseflow.geolocator.GeolocatorPlugin", e);
-    }
-    try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.googlesignin.GoogleSignInPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin google_sign_in_android, io.flutter.plugins.googlesignin.GoogleSignInPlugin", e);
@@ -124,6 +99,11 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new dev.flutter.plugins.integration_test.IntegrationTestPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin integration_test, dev.flutter.plugins.integration_test.IntegrationTestPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.ryanheise.just_audio.JustAudioPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin just_audio, com.ryanheise.just_audio.JustAudioPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new com.lyokone.location.LocationPlugin());
@@ -154,11 +134,6 @@ public final class GeneratedPluginRegistrant {
       flutterEngine.getPlugins().add(new com.onesignal.flutter.OneSignalPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin onesignal_flutter, com.onesignal.flutter.OneSignalPlugin", e);
-    }
-    try {
-      flutterEngine.getPlugins().add(new eu.epnw.opus_flutter_android.OpusFlutterAndroidPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin opus_flutter_android, eu.epnw.opus_flutter_android.OpusFlutterAndroidPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.packageinfo.PackageInfoPlugin());

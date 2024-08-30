@@ -27,7 +27,7 @@ class _AddContextPageState extends State<AddContextPage> {
         content: content,
         createdAt: DateTime.now(),
       );
-      await widget.databaseService.addContextItem(contextItem);
+      await widget.databaseService.contextItemBox.put(contextItem);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Context added successfully')),
       );

@@ -1,36 +1,31 @@
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../backend/schema/bt_device.dart';
+import '../utils/ble/scan.dart';
+import 'package:flutter/foundation.dart';
 
 class BleService {
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
-  BluetoothDevice? connectedDevice;
+  BTDeviceStruct? connectedDevice;
 
-  Future<void> connectToDevice() async {
-    // Start scanning
-    await flutterBlue.startScan(timeout: Duration(seconds: 4));
-
-    // Listen to scan results
-    var subscription = flutterBlue.scanResults.listen((results) {
-      // TODO: Add logic to identify your specific device
-      for (ScanResult r in results) {
-        if (r.device.name == 'YourDeviceName') {
-          // Connect to this device
-          r.device.connect().then((_) {
-            connectedDevice = r.device;
-            print('Connected to ${r.device.name}');
-          });
-          break;
-        }
-      }
-    });
-
-    // Stop scanning
-    await flutterBlue.stopScan();
+  Future<BTDeviceStruct?> connectToDevice() async {
+    debugPrint('BleService: Starting connectToDevice');
+    connectedDevice = await scanAndConnectDevice(autoConnect: false);
+    if (connectedDevice != null) {
+      debugPrint('BleService: Successfully connected to ${connectedDevice!.name}');
+    } else {
+      debugPrint('BleService: Failed to connect to any device');
+    }
+    return connectedDevice;
   }
 
   Future<void> disconnectDevice() async {
     if (connectedDevice != null) {
-      await connectedDevice!.disconnect();
+      debugPrint('BleService: Disconnecting from ${connectedDevice!.name}');
+      final device = BluetoothDevice.fromId(connectedDevice!.id);
+      await device.disconnect();
       connectedDevice = null;
+      debugPrint('BleService: Device disconnected');
+    } else {
+      debugPrint('BleService: No device to disconnect');
     }
   }
 }

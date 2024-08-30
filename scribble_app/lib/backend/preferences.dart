@@ -1,11 +1,5 @@
-import 'dart:convert';
 
-import 'package:collection/collection.dart';
-import 'package:scribble_app/backend/database/transcript_segment.dart';
 import 'package:scribble_app/backend/schema/bt_device.dart';
-import 'package:scribble_app/backend/schema/memory.dart';
-import 'package:scribble_app/backend/schema/message.dart';
-import 'package:scribble_app/backend/schema/plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesUtil {
@@ -110,110 +104,6 @@ class SharedPreferencesUtil {
   String get locationPermissionState => getString('locationPermissionState') ?? 'UNKNOWN';
 
   set locationPermissionState(String value) => saveString('locationPermissionState', value);
-
-  List<Plugin> get pluginsList {
-    final List<String> plugins = getStringList('pluginsList') ?? [];
-    return Plugin.fromJsonList(plugins.map((e) => jsonDecode(e)).toList());
-  }
-
-  set pluginsList(List<Plugin> value) {
-    final List<String> plugins = value.map((e) => jsonEncode(e.toJson())).toList();
-    saveStringList('pluginsList', plugins);
-  }
-
-  enablePlugin(String value) {
-    final List<Plugin> plugins = pluginsList;
-    final plugin = plugins.firstWhere((element) => element.id == value);
-    plugin.enabled = true;
-    pluginsList = plugins;
-  }
-
-  disablePlugin(String value) {
-    final List<Plugin> plugins = pluginsList;
-    final plugin = plugins.firstWhere((element) => element.id == value);
-    plugin.enabled = false;
-    pluginsList = plugins;
-  }
-
-  String get selectedChatPluginId => getString('selectedChatPluginId2') ?? 'no_selected';
-
-  set selectedChatPluginId(String value) => saveString('selectedChatPluginId2', value);
-
-  List<TranscriptSegment> get transcriptSegments {
-    final List<String> segments = getStringList('transcriptSegments') ?? [];
-    return segments.map((e) => TranscriptSegment.fromJson(jsonDecode(e))).toList();
-  }
-
-  set transcriptSegments(List<TranscriptSegment> value) {
-    final List<String> segments = value.map((e) => jsonEncode(e.toJson())).toList();
-    saveStringList('transcriptSegments', segments);
-  }
-
-  List<ServerMemory> get failedMemories {
-    final List<String> memories = getStringList('failedServerMemories') ?? [];
-    return memories.map((e) => ServerMemory.fromJson(jsonDecode(e))).toList();
-  }
-
-  set failedMemories(List<ServerMemory> value) {
-    final List<String> memories = value.map((e) => jsonEncode(e.toJson())).toList();
-    saveStringList('failedServerMemories', memories);
-  }
-
-  List<ServerMemory> get cachedMemories {
-    final List<String> memories = getStringList('cachedMemories') ?? [];
-    return memories.map((e) => ServerMemory.fromJson(jsonDecode(e))).toList();
-  }
-
-  set cachedMemories(List<ServerMemory> value) {
-    final List<String> memories = value.map((e) => jsonEncode(e.toJson())).toList();
-    saveStringList('cachedMemories', memories);
-  }
-
-  List<ServerMessage> get cachedMessages {
-    final List<String> messages = getStringList('cachedMessages') ?? [];
-    return messages.map((e) => ServerMessage.fromJson(jsonDecode(e))).toList();
-  }
-
-  set cachedMessages(List<ServerMessage> value) {
-    final List<String> messages = value.map((e) => jsonEncode(e.toJson())).toList();
-    saveStringList('cachedMessages', messages);
-  }
-
-  addFailedMemory(ServerMemory memory) {
-    if (memory.transcriptSegments.isEmpty && memory.photos.isEmpty) return;
-
-    final List<ServerMemory> memories = failedMemories;
-    memories.add(memory);
-    failedMemories = memories;
-  }
-
-  removeFailedMemory(String memoryId) {
-    final List<ServerMemory> memories = failedMemories;
-    ServerMemory? memory = memories.firstWhereOrNull((m) => m.id == memoryId);
-    if (memory != null) {
-      memories.remove(memory);
-      failedMemories = memories;
-    }
-  }
-
-  increaseFailedMemoryRetries(String memoryId) {
-    final List<ServerMemory> memories = failedMemories;
-    ServerMemory? memory = memories.firstWhereOrNull((m) => m.id == memoryId);
-    if (memory != null) {
-      memory.retries += 1;
-      failedMemories = memories;
-    }
-  }
-
-  ServerMemory? get modifiedMemoryDetails {
-    final String memory = getString('modifiedMemoryDetails') ?? '';
-    if (memory.isEmpty) return null;
-    return ServerMemory.fromJson(jsonDecode(memory));
-  }
-
-  set modifiedMemoryDetails(ServerMemory? value) {
-    saveString('modifiedMemoryDetails', value == null ? '' : jsonEncode(value.toJson()));
-  }
 
   bool get backupsEnabled => getBool('backupsEnabled2') ?? true;
 

@@ -19,6 +19,7 @@ Future<void> bleConnectDevice(String deviceId, {bool autoConnect = true}) async 
     if (Platform.isAndroid) await device.requestMtu(512);
   } catch (e) {
     debugPrint('bleConnectDevice failed: $e');
+    rethrow; // Rethrow the error so it can be caught in the calling function
   }
 }
 

@@ -1,4 +1,4 @@
-import 'package:friend_private/env/dev_env.dart';
+import 'package:scribble_app/env/dev_env.dart';
 
 abstract class Env {
   static late final EnvFields _instance;

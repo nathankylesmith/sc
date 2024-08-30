@@ -45,3 +45,16 @@ Future<List<BTDeviceStruct>> bleFindDevices() async {
 
   return devices;
 }
+
+Future<BTDeviceStruct?> getConnectedDevice() async {
+  List<BluetoothDevice> connectedDevices = await FlutterBluePlus.connectedSystemDevices;
+  if (connectedDevices.isNotEmpty) {
+    BluetoothDevice device = connectedDevices.first;
+    return BTDeviceStruct(
+      id: device.remoteId.str,
+      name: device.platformName,
+      rssi: 0, // RSSI not available for already connected devices
+    );
+  }
+  return null;
+}

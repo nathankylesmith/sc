@@ -15,6 +15,7 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'models/audio_recording.dart';
 import 'models/context_item.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
@@ -84,6 +85,35 @@ final _entities = <obx_int.ModelEntity>[
             relationTarget: 'AudioContextItem')
       ],
       relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(6, 4067806130680950412),
+      name: 'AudioRecording',
+      lastPropertyId: const obx_int.IdUid(4, 3282377542032703978),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 2364936867840592968),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 7501538362287621858),
+            name: 'timestamp',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(3, 2069735353287538095),
+            name: 'filePath',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 3282377542032703978),
+            name: 'duration',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
       backlinks: <obx_int.ModelBacklink>[])
 ];
 
@@ -122,7 +152,7 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(5, 2272467020430899855),
+      lastEntityId: const obx_int.IdUid(6, 4067806130680950412),
       lastIndexId: const obx_int.IdUid(2, 6286035844982742130),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
@@ -230,6 +260,41 @@ obx_int.ModelDefinition getObjectBoxModel() {
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 12, 0);
           object.audioContextItem.attach(store);
           return object;
+        }),
+    AudioRecording: obx_int.EntityDefinition<AudioRecording>(
+        model: _entities[2],
+        toOneRelations: (AudioRecording object) => [],
+        toManyRelations: (AudioRecording object) => {},
+        getId: (AudioRecording object) => object.id,
+        setId: (AudioRecording object, int id) {
+          object.id = id;
+        },
+        objectToFB: (AudioRecording object, fb.Builder fbb) {
+          final filePathOffset = fbb.writeString(object.filePath);
+          fbb.startTable(5);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.timestamp.millisecondsSinceEpoch);
+          fbb.addOffset(2, filePathOffset);
+          fbb.addInt64(3, object.duration);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final timestampParam = DateTime.fromMillisecondsSinceEpoch(
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0));
+          final filePathParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 8, '');
+          final durationParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0);
+          final object = AudioRecording(
+              timestamp: timestampParam,
+              filePath: filePathParam,
+              duration: durationParam)
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+
+          return object;
         })
   };
 
@@ -277,4 +342,23 @@ class ContextItem_ {
   static final audioContextItem =
       obx.QueryRelationToOne<ContextItem, AudioContextItem>(
           _entities[1].properties[4]);
+}
+
+/// [AudioRecording] entity fields to define ObjectBox queries.
+class AudioRecording_ {
+  /// see [AudioRecording.id]
+  static final id =
+      obx.QueryIntegerProperty<AudioRecording>(_entities[2].properties[0]);
+
+  /// see [AudioRecording.timestamp]
+  static final timestamp =
+      obx.QueryDateProperty<AudioRecording>(_entities[2].properties[1]);
+
+  /// see [AudioRecording.filePath]
+  static final filePath =
+      obx.QueryStringProperty<AudioRecording>(_entities[2].properties[2]);
+
+  /// see [AudioRecording.duration]
+  static final duration =
+      obx.QueryIntegerProperty<AudioRecording>(_entities[2].properties[3]);
 }
