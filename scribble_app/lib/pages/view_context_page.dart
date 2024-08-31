@@ -41,6 +41,14 @@ class _ViewContextPageState extends State<ViewContextPage> {
       print('File exists. Size: $fileSize bytes');
       
       try {
+        // Read and print the first 44 bytes (WAV header) of the file
+        final header = await file.openRead(0, 44).first;
+        print('WAV Header: ${header.map((e) => e.toRadixString(16).padLeft(2, '0')).join(' ')}');
+
+        // Read and print the first 20 bytes of audio data
+        final audioData = await file.openRead(44, 64).first;
+        print('First 20 bytes of audio data: ${audioData.map((e) => e.toRadixString(16).padLeft(2, '0')).join(' ')}');
+
         await audioPlayer.setFilePath(filePath);
         await audioPlayer.play();
         setState(() {

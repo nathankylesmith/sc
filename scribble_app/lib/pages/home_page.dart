@@ -14,6 +14,8 @@ import '../utils/ble/gatt_utils.dart';
 import 'view_context_page.dart';
 import 'dart:typed_data';
 import 'dart:math';
+import 'dart:async';
+import '../services/audio_service.dart';
 
 class HomePage extends StatefulWidget {
   final DatabaseService databaseService;
@@ -36,11 +38,85 @@ class _HomePageState extends State<HomePage> {
   int _bitsPerSample = 8; // Change to 8-bit audio
   bool _isULaw = true; // Set to true if the device is using µ-law encoding
   BleAudioCodec _audioCodec = BleAudioCodec.unknown;
+  final AudioService _audioService = AudioService();
+  StreamSubscription<List<int>>? _audioSubscription;
+  Timer? _connectionCheckTimer;
+  bool _isProcessingAudio = false;
 
   @override
   void initState() {
     super.initState();
     _updateConnectedDeviceInfo();
+    _startConnectionCheck();
+  }
+
+  @override
+  void dispose() {
+    _audioSubscription?.cancel();
+    _connectionCheckTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startConnectionCheck() {
+    _connectionCheckTimer = Timer.periodic(Duration(seconds: 5), (_) {
+      if (_isConnected && _connectedDevice != null) {
+        _checkConnectionStatus();
+      }
+    });
+  }
+
+  Future<void> _checkConnectionStatus() async {
+    try {
+      final device = BluetoothDevice.fromId(_connectedDevice!.id);
+      await device.state.first;
+    } catch (e) {
+      print('BLE connection lost: $e');
+      await _handleDisconnection();
+    }
+  }
+
+  Future<void> _handleDisconnection() async {
+    setState(() {
+      _isConnected = false;
+      _connectedDevice = null;
+    });
+    if (_isRecording) {
+      _stopRecording();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('BLE connection lost. Attempting to reconnect...')),
+    );
+    await _reconnectToDevice();
+  }
+
+  Future<void> _reconnectToDevice() async {
+    final deviceId = SharedPreferencesUtil().deviceId;
+    if (deviceId.isNotEmpty) {
+      try {
+        final device = await scanAndConnectDevice(autoConnect: true);
+        setState(() {
+          _connectedDevice = device;
+          _isConnected = device != null;
+        });
+        if (device != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Reconnected to ${device.name}')),
+          );
+        }
+      } catch (e) {
+        print('Failed to reconnect: $e');
+      }
+    }
+  }
+
+  void _resetAudioSettings() {
+    _sampleRate = 8000;
+    _bitsPerSample = 8;
+    _numChannels = 1;
+    _audioCodec = BleAudioCodec.unknown;
+    _audioBuffer.clear();
+    _isULaw = false;
+    _audioService.resetBuffer();
   }
 
   void _updateConnectedDeviceInfo() async {
@@ -226,6 +302,8 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
+    _resetAudioSettings();
+
     try {
       final device = BluetoothDevice.fromId(_connectedDevice!.id);
       final services = await device.discoverServices();
@@ -244,27 +322,30 @@ class _HomePageState extends State<HomePage> {
       
       print('Detected audio codec: $_audioCodec');
       
+      // Update audio settings based on codec
+      switch (_audioCodec) {
+        case BleAudioCodec.pcm16:
+          _sampleRate = 16000;
+          _bitsPerSample = 16;
+          break;
+        case BleAudioCodec.mulaw8:
+        case BleAudioCodec.mulaw16:
+          _sampleRate = 8000;
+          _bitsPerSample = 16; // We'll convert µ-law to 16-bit PCM
+          _isULaw = true;
+          break;
+        default:
+          // Keep default settings for unknown codecs
+          break;
+      }
+      
       _audioCharacteristic = audioService.characteristics.firstWhere(
         (c) => c.uuid.toString() == audioDataStreamCharacteristicUuid,
         orElse: () => throw Exception('Audio characteristic not found'),
       );
 
-      _audioBuffer.clear(); // Clear the buffer before starting a new recording
-
       await _audioCharacteristic!.setNotifyValue(true);
-      _audioCharacteristic!.value.listen((value) {
-        if (value.length > 3) {
-          var audioData = value.sublist(3); // Skip the first 3 bytes (header)
-          print('Raw audio data (first 10 bytes): ${audioData.take(10).toList()}');
-          if (_audioCodec == BleAudioCodec.mulaw8 || _audioCodec == BleAudioCodec.mulaw16) {
-            audioData = _decodeULaw(audioData);
-            print('Decoded audio data (first 10 samples): ${audioData.take(20).toList()}');
-          }
-          _audioBuffer.addAll(audioData);
-        }
-        print('Received audio data: ${value.length} bytes');
-        print('Total audio data: ${_audioBuffer.length} bytes');
-      });
+      _audioSubscription = _audioCharacteristic!.value.listen(_processAudioData);
 
       setState(() {
         _isRecording = true;
@@ -285,6 +366,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _processAudioData(List<int> value) async {
+    if (_isProcessingAudio) return;
+    _isProcessingAudio = true;
+
+    try {
+      if (value.length > 3) {
+        var audioData = value.sublist(3); // Skip the first 3 bytes (header)
+        await _audioService.addAudioData(audioData);
+      }
+    } catch (e) {
+      print('Error processing audio data: $e');
+    } finally {
+      _isProcessingAudio = false;
+    }
+  }
+
   void _stopRecording() async {
     if (_audioCharacteristic == null) {
       print('Audio characteristic is null');
@@ -293,18 +390,19 @@ class _HomePageState extends State<HomePage> {
 
     try {
       await _audioCharacteristic!.setNotifyValue(false);
+      _audioSubscription?.cancel();
 
       final timestamp = DateTime.now();
       final fileName = 'audio_${timestamp.millisecondsSinceEpoch}.wav';
       final directory = await getApplicationDocumentsDirectory();
       final filePath = '${directory.path}/$fileName';
 
-      await _createWavFile(filePath, _audioBuffer);
+      await _audioService.saveAudioFile(fileName, _sampleRate, _numChannels, _bitsPerSample);
 
       final audioRecording = AudioRecording(
         timestamp: timestamp,
         filePath: filePath,
-        duration: (_audioBuffer.length / (_sampleRate * _numChannels * (_bitsPerSample ~/ 8))).round(),
+        duration: _audioService.getDuration(_sampleRate, _numChannels, _bitsPerSample),
       );
 
       final id = widget.databaseService.audioRecordingBox.put(audioRecording);
@@ -323,54 +421,6 @@ class _HomePageState extends State<HomePage> {
         SnackBar(content: Text('Failed to stop recording: $e')),
       );
     }
-  }
-
-  Future<void> _createWavFile(String filePath, List<int> audioData) async {
-    final file = File(filePath);
-    final sink = file.openWrite();
-    
-    final int bitsPerSample = 16; // We're always converting to 16-bit PCM
-    final int bytesPerSample = bitsPerSample ~/ 8;
-    final int dataSize = audioData.length * bytesPerSample;
-    final int fileSize = 36 + dataSize;
-    final int byteRate = _sampleRate * _numChannels * bytesPerSample;
-    final int blockAlign = _numChannels * bytesPerSample;
-
-    final wavHeader = [
-      0x52, 0x49, 0x46, 0x46, // "RIFF"
-      ...intToBytes(fileSize, 4), // Chunk size
-      0x57, 0x41, 0x56, 0x45, // "WAVE"
-      0x66, 0x6D, 0x74, 0x20, // "fmt "
-      16, 0, 0, 0, // Subchunk1 size (16 bytes)
-      1, 0, // Audio format (1 = PCM)
-      ...intToBytes(_numChannels, 2), // Number of channels
-      ...intToBytes(_sampleRate, 4), // Sample rate
-      ...intToBytes(byteRate, 4), // Byte rate
-      ...intToBytes(blockAlign, 2), // Block align
-      ...intToBytes(bitsPerSample, 2), // Bits per sample
-      0x64, 0x61, 0x74, 0x61, // "data"
-      ...intToBytes(dataSize, 4), // Subchunk2 size
-    ];
-
-    print('WAV header: ${wavHeader.map((e) => e.toRadixString(16).padLeft(2, '0')).join(' ')}');
-
-    sink.add(Uint8List.fromList(wavHeader));
-    
-    // Ensure we're writing 16-bit samples
-    if (bytesPerSample == 2) {
-      for (int i = 0; i < audioData.length; i += 2) {
-        int sample = (audioData[i+1] << 8) | audioData[i];
-        sink.add(Uint8List.fromList([sample & 0xFF, (sample >> 8) & 0xFF]));
-      }
-    } else {
-      sink.add(Uint8List.fromList(audioData));
-    }
-
-    await sink.close();
-
-    print('WAV file created: $filePath');
-    print('File size: ${await file.length()} bytes');
-    print('Expected file size: ${fileSize + 8} bytes');
   }
 
   List<int> intToBytes(int value, int length) {
